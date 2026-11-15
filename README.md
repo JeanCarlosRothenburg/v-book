@@ -54,3 +54,39 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Regras de negócio — Tela inicial e Tela de consultas
+
+> Por enquanto o front usa dados de teste (`src/data/livros.ts`). Abaixo está o que o back/banco precisa fornecer.
+
+### Livro
+Cada livro tem: `id`, `titulo`, `autor`, `genero` e `paginas`. Campos opcionais:
+
+| Campo | Para que serve |
+|---|---|
+| `status` | `lendo`, `lido` ou vazio (ainda não leu) |
+| `paginaAtual` | só quando `lendo` (0 até `paginas`) |
+| `nota` (1 a 5) e `dataLeitura` (AAAA-MM-DD) | só quando `lido` |
+| `novidade` | `true` = aparece na seção "Novidades" |
+| `original` | `true` = aparece na seção "Originais" |
+
+Um livro só pode ter um status por vez. Ao terminar de ler, passa de `lendo` para `lido` e ganha nota e data de leitura.
+
+### Tela inicial
+- Mostra seções em sequência, cada uma com um título e uma fileira de livros (capas) que rola para o lado: **Novidades**, **Originais** e uma seção por gênero (Ficção, História, Fantasia, Romance, Tecnologia, Desenvolvimento pessoal).
+- Novidades = livros com `novidade = true`. Originais = livros com `original = true`. Cada seção de gênero mostra os livros com aquele `genero`.
+- Seções sem livros não aparecem.
+- Cada livro aparece como um quadrado de capa com o título, e o autor embaixo.
+
+### Tela de consultas
+- Lista **todos** os livros com status `lido`, do mais recente para o mais antigo (`dataLeitura`).
+- Cada item mostra título, autor, gênero, nota, páginas e data de leitura.
+- Busca por título ou autor (ignora maiúsculas e acentos).
+- Mostra a quantidade de livros encontrados e a mensagem "Nenhum livro encontrado" quando a busca não retorna nada.
+
+### O que o back precisa oferecer
+- `GET /livros?novidade=true` — livros da seção Novidades.
+- `GET /livros?original=true` — livros da seção Originais.
+- `GET /livros?genero=Ficção` — livros de um gênero (uma chamada por seção).
+- `GET /livros?status=lido&busca=texto` — livros lidos, já ordenados por `dataLeitura` decrescente, com filtro opcional por título/autor (tela de consultas).
+- `GET /livros?status=lendo` — livros em andamento.
