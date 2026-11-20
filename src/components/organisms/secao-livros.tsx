@@ -1,8 +1,8 @@
 import { FlatList, Platform, StyleSheet } from 'react-native';
 
-import { LivroCapa } from '@/components/livro-capa';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { LivroCapa } from '@/components/molecules/livro-capa';
+import { ThemedText } from '@/components/atoms/themed-text';
+import { ThemedView } from '@/components/atoms/themed-view';
 import { Spacing } from '@/constants/theme';
 import type { Livro } from '@/data/livros';
 

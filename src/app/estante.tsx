@@ -1,21 +1,31 @@
 import { useState } from 'react';
-import { Platform, ScrollView, StyleSheet, TextInput } from 'react-native';
+import { Platform, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { LivroCard } from '@/components/livro-card';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { ThemedText } from '@/components/atoms/themed-text';
+import { ThemedView } from '@/components/atoms/themed-view';
+import { FilterChips } from '@/components/molecules/filter-chips';
+import { SearchBar } from '@/components/molecules/search-bar';
+import { ListaLivros } from '@/components/organisms/lista-livros';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { buscarLivros } from '@/data/livros';
+import { listarEstante, type FiltroEstante } from '@/data/livros';
 import { useTheme } from '@/hooks/use-theme';
 
-// Tela de CONSULTAS: lista todos os livros lidos.
-export default function ConsultasScreen() {
+const FILTROS: { valor: FiltroEstante; rotulo: string }[] = [
+  { valor: 'todos', rotulo: 'Marcar tudo' },
+  { valor: 'lendo', rotulo: 'Lendo' },
+  { valor: 'favoritos', rotulo: 'Favoritos' },
+  { valor: 'nao-lido', rotulo: 'Não lido' },
+];
+
+// Tela ESTANTE (antiga "Consultas"): busca + filtros + lista de livros com capa.
+export default function EstanteScreen() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const [busca, setBusca] = useState('');
+  const [filtro, setFiltro] = useState<FiltroEstante>('todos');
 
-  const livros = buscarLivros(busca);
+  const livros = listarEstante(filtro, busca);
 
   return (
     <ScrollView
@@ -34,24 +44,10 @@ export default function ConsultasScreen() {
           {livros.length} {livros.length === 1 ? 'livro encontrado' : 'livros encontrados'}
         </ThemedText>
 
-        <TextInput
-          value={busca}
-          onChangeText={setBusca}
-          placeholder="Buscar por título ou autor"
-          placeholderTextColor={theme.textSecondary}
-          style={[
-            styles.input,
-            { color: theme.text, backgroundColor: theme.backgroundElement },
-          ]}
-        />
+        <SearchBar value={busca} onChangeText={setBusca} />
+        <FilterChips opcoes={FILTROS} valor={filtro} onChange={setFiltro} />
 
-        {livros.map((livro) => (
-          <LivroCard key={livro.id} livro={livro} />
-        ))}
-
-        {livros.length === 0 && (
-          <ThemedText themeColor="textSecondary">Nenhum livro encontrado.</ThemedText>
-        )}
+        <ListaLivros livros={livros} />
       </ThemedView>
     </ScrollView>
   );
@@ -66,10 +62,5 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: MaxContentWidth,
     gap: Spacing.three,
-  },
-  input: {
-    padding: Spacing.three,
-    borderRadius: Spacing.three,
-    fontSize: 16,
   },
 });

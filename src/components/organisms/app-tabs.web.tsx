@@ -11,9 +11,9 @@ import { Pressable, useColorScheme, View, StyleSheet } from 'react-native';
 
 import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
 
-import { ExternalLink } from './external-link';
-import { ThemedText } from './themed-text';
-import { ThemedView } from './themed-view';
+import { ExternalLink } from '@/components/atoms/external-link';
+import { ThemedText } from '@/components/atoms/themed-text';
+import { ThemedView } from '@/components/atoms/themed-view';
 
 export default function AppTabs() {
   return (
@@ -24,8 +24,8 @@ export default function AppTabs() {
           <TabTrigger name="home" href="/" asChild>
             <TabButton>Início</TabButton>
           </TabTrigger>
-          <TabTrigger name="explore" href="/explore" asChild>
-            <TabButton>Consultas</TabButton>
+          <TabTrigger name="estante" href="/estante" asChild>
+            <TabButton>Estante</TabButton>
           </TabTrigger>
         </CustomTabList>
       </TabList>

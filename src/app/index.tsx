@@ -1,8 +1,9 @@
 import { Platform, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { SecaoLivros } from '@/components/secao-livros';
-import { ThemedView } from '@/components/themed-view';
+import { SecaoLivros } from '@/components/organisms/secao-livros';
+import { TopBar } from '@/components/organisms/top-bar';
+import { ThemedView } from '@/components/atoms/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import {
   GENEROS,
@@ -18,6 +19,15 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
 
+  // Ações do topo. Ainda não existem as telas de configurações e de notificações:
+  // quando existirem, troque os corpos abaixo por `router.push('/configuracoes')` etc.
+  const abrirConfiguracoes = () => {
+    // TODO: navegar para a tela de configurações
+  };
+  const abrirNotificacoes = () => {
+    // TODO: navegar para a tela de notificações
+  };
+
   return (
     <ScrollView
       style={{ backgroundColor: theme.background }}
@@ -29,6 +39,12 @@ export default function HomeScreen() {
         },
       ]}>
       <ThemedView style={styles.container}>
+        <TopBar
+          titulo="Início"
+          onPressConfiguracoes={abrirConfiguracoes}
+          onPressNotificacoes={abrirNotificacoes}
+        />
+
         <SecaoLivros titulo="Novidades" livros={listarNovidades()} />
         <SecaoLivros titulo="Originais" livros={listarOriginais()} />
 
