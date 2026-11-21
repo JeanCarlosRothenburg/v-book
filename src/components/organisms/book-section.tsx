@@ -1,10 +1,10 @@
 import { FlatList, Platform, StyleSheet } from 'react-native';
 
-import { LivroCapa } from '@/components/molecules/livro-capa';
+import { BookCoverItem } from '@/components/molecules/book-cover-item';
 import { ThemedText } from '@/components/atoms/themed-text';
 import { ThemedView } from '@/components/atoms/themed-view';
 import { Spacing } from '@/constants/theme';
-import type { Livro } from '@/data/livros';
+import type { Livro } from '@/types/book';
 
 type Props = {
   titulo: string;
@@ -12,7 +12,7 @@ type Props = {
 };
 
 // Uma seção da tela inicial: título + fileira de livros que rola para o lado.
-export function SecaoLivros({ titulo, livros }: Props) {
+export function BookSection({ titulo, livros }: Props) {
   if (livros.length === 0) return null;
 
   return (
@@ -23,7 +23,7 @@ export function SecaoLivros({ titulo, livros }: Props) {
       <FlatList
         data={livros}
         keyExtractor={(livro) => String(livro.id)}
-        renderItem={({ item }) => <LivroCapa livro={item} />}
+        renderItem={({ item }) => <BookCoverItem livro={item} />}
         horizontal
         // No navegador mostra a barra de rolagem, porque o mouse não "arrasta".
         showsHorizontalScrollIndicator={Platform.OS === 'web'}

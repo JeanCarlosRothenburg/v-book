@@ -1,16 +1,11 @@
 import { Platform, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { SecaoLivros } from '@/components/organisms/secao-livros';
-import { TopBar } from '@/components/organisms/top-bar';
 import { ThemedView } from '@/components/atoms/themed-view';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import {
-  GENEROS,
-  listarNovidades,
-  listarOriginais,
-  listarPorGenero,
-} from '@/data/livros';
+import { BookSection } from '@/components/organisms/book-section';
+import { TopBar } from '@/components/organisms/top-bar';
+import { MaxContentWidth, Spacing } from '@/constants/theme';
+import { GENRES, listByGenre, listNewReleases, listOriginals } from '@/features/home/repository';
 import { useTheme } from '@/hooks/use-theme';
 
 // Tela INICIAL: seções (Novidades, Originais e uma por gênero), cada uma com uma
@@ -35,7 +30,7 @@ export default function HomeScreen() {
         styles.content,
         {
           paddingTop: Platform.OS === 'web' ? Spacing.six : insets.top + Spacing.three,
-          paddingBottom: insets.bottom + BottomTabInset + Spacing.four,
+          paddingBottom: Spacing.four,
         },
       ]}>
       <ThemedView style={styles.container}>
@@ -45,12 +40,12 @@ export default function HomeScreen() {
           onPressNotificacoes={abrirNotificacoes}
         />
 
-        <SecaoLivros titulo="Novidades" livros={listarNovidades()} />
-        <SecaoLivros titulo="Originais" livros={listarOriginais()} />
+        <BookSection titulo="Novidades" livros={listNewReleases()} />
+        <BookSection titulo="Originais" livros={listOriginals()} />
 
-        {/* Uma seção para cada gênero da lista GENEROS (src/data/livros.ts) */}
-        {GENEROS.map((genero) => (
-          <SecaoLivros key={genero} titulo={genero} livros={listarPorGenero(genero)} />
+        {/* Uma seção para cada gênero da lista GENRES (src/features/home/repository) */}
+        {GENRES.map((genero) => (
+          <BookSection key={genero} titulo={genero} livros={listByGenre(genero)} />
         ))}
       </ThemedView>
     </ScrollView>

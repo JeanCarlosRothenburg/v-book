@@ -1,6 +1,6 @@
 import type { ImageSource } from 'expo-image';
 
-import type { Livro } from '@/data/livros';
+import type { Livro } from '@/types/book';
 
 // Capas PROVISÓRIAS (geradas, uma por id) enquanto não há as imagens reais.
 // Para trocar: substitua o arquivo em assets/images/capas/ ou preencha `capa` no livro
@@ -43,6 +43,6 @@ const CAPAS: Record<number, ImageSource> = {
 };
 
 /** Capa do livro: a do próprio livro (`capa`) ou, se não tiver, a provisória pelo id. */
-export function capaDoLivro(livro: Livro): ImageSource | undefined {
+export function getCover(livro: Livro): ImageSource | undefined {
   return livro.capa ?? CAPAS[livro.id];
 }

@@ -2,10 +2,7 @@ import { Image, type ImageSource } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/atoms/themed-text';
-import { Spacing } from '@/constants/theme';
-
-// Cor de reserva (pelo id) usada quando o livro ainda não tem imagem de capa.
-const CORES = ['#3B5BDB', '#C2255C', '#2B8A3E', '#E8590C', '#7048E8', '#0C8599', '#B08800', '#862E9C'];
+import { BookCoverColors, BookCoverTextColor, Spacing } from '@/constants/theme';
 
 type Props = {
   titulo: string;
@@ -33,7 +30,7 @@ export function BookCover({ titulo, corIndice = 0, source, width, height }: Prop
       style={[
         styles.capa,
         styles.reserva,
-        { width, height, backgroundColor: CORES[corIndice % CORES.length] },
+        { width, height, backgroundColor: BookCoverColors[corIndice % BookCoverColors.length] },
       ]}>
       <ThemedText type="smallBold" style={styles.titulo} numberOfLines={5}>
         {titulo}
@@ -51,6 +48,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   titulo: {
-    color: '#FFFFFF',
+    color: BookCoverTextColor,
   },
 });

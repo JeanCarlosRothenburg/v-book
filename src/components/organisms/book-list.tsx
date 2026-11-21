@@ -2,16 +2,16 @@ import { StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/atoms/themed-text';
 import { ThemedView } from '@/components/atoms/themed-view';
-import { LivroCard } from '@/components/molecules/livro-card';
+import { BookCard } from '@/components/molecules/book-card';
 import { Spacing } from '@/constants/theme';
-import type { Livro } from '@/data/livros';
+import type { Livro } from '@/types/book';
 
 // Lista vertical de livros (tela Estante) com a mensagem de lista vazia.
-export function ListaLivros({ livros }: { livros: Livro[] }) {
+export function BookList({ livros }: { livros: Livro[] }) {
   return (
     <ThemedView style={styles.lista}>
       {livros.map((livro) => (
-        <LivroCard key={livro.id} livro={livro} />
+        <BookCard key={livro.id} livro={livro} />
       ))}
 
       {livros.length === 0 && (

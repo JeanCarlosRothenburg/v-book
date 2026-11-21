@@ -6,12 +6,13 @@ import { ThemedText } from '@/components/atoms/themed-text';
 import { ThemedView } from '@/components/atoms/themed-view';
 import { FilterChips } from '@/components/molecules/filter-chips';
 import { SearchBar } from '@/components/molecules/search-bar';
-import { ListaLivros } from '@/components/organisms/lista-livros';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { listarEstante, type FiltroEstante } from '@/data/livros';
+import { BookList } from '@/components/organisms/book-list';
+import { MaxContentWidth, Spacing } from '@/constants/theme';
+import { listLibrary } from '@/features/library/repository';
+import type { LibraryFilter } from '@/features/library/types';
 import { useTheme } from '@/hooks/use-theme';
 
-const FILTROS: { valor: FiltroEstante; rotulo: string }[] = [
+const FILTROS: { valor: LibraryFilter; rotulo: string }[] = [
   { valor: 'todos', rotulo: 'Marcar tudo' },
   { valor: 'lendo', rotulo: 'Lendo' },
   { valor: 'favoritos', rotulo: 'Favoritos' },
@@ -19,13 +20,13 @@ const FILTROS: { valor: FiltroEstante; rotulo: string }[] = [
 ];
 
 // Tela ESTANTE (antiga "Consultas"): busca + filtros + lista de livros com capa.
-export default function EstanteScreen() {
+export default function LibraryScreen() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const [busca, setBusca] = useState('');
-  const [filtro, setFiltro] = useState<FiltroEstante>('todos');
+  const [filtro, setFiltro] = useState<LibraryFilter>('todos');
 
-  const livros = listarEstante(filtro, busca);
+  const livros = listLibrary(filtro, busca);
 
   return (
     <ScrollView
@@ -34,7 +35,7 @@ export default function EstanteScreen() {
         styles.content,
         {
           paddingTop: Platform.OS === 'web' ? Spacing.six : insets.top + Spacing.three,
-          paddingBottom: insets.bottom + BottomTabInset + Spacing.four,
+          paddingBottom: Spacing.four,
         },
       ]}
       keyboardShouldPersistTaps="handled">
@@ -47,7 +48,7 @@ export default function EstanteScreen() {
         <SearchBar value={busca} onChangeText={setBusca} />
         <FilterChips opcoes={FILTROS} valor={filtro} onChange={setFiltro} />
 
-        <ListaLivros livros={livros} />
+        <BookList livros={livros} />
       </ThemedView>
     </ScrollView>
   );

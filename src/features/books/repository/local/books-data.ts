@@ -1,36 +1,10 @@
 // Dados FICTÍCIOS só para teste do front.
-// Quando o banco do Jean ficar pronto, estas funções são trocadas por chamadas à API.
+// Quando o banco do Jean ficar pronto, o repository `remote` passa a buscar estes dados
+// na API e este arquivo deixa de ser usado.
 
-import type { ImageSource } from 'expo-image';
+import type { Livro } from '@/types/book';
 
-export type Livro = {
-  id: number;
-  titulo: string;
-  autor: string;
-  genero: string;
-  paginas: number;
-  status?: 'lendo' | 'lido'; // sem status = ainda não leu
-  paginaAtual?: number; // só para livros 'lendo'
-  nota?: number; // 1 a 5, só para livros 'lido'
-  dataLeitura?: string; // AAAA-MM-DD (data em que terminou de ler), só para 'lido'
-  novidade?: boolean; // aparece na seção "Novidades" da tela inicial
-  original?: boolean; // aparece na seção "Originais" da tela inicial
-  favorito?: boolean; // marcado como favorito (filtro "Favoritos" da Estante)
-  capa?: ImageSource; // imagem da capa; se vier vazia usa a de src/data/capas.ts
-};
-
-// Gêneros que viram uma fileira na tela inicial (na ordem em que aparecem).
-// Para criar uma seção nova: adicione o gênero aqui e livros com esse `genero` abaixo.
-export const GENEROS = [
-  'Ficção',
-  'História',
-  'Fantasia',
-  'Romance',
-  'Tecnologia',
-  'Desenvolvimento pessoal',
-];
-
-export const LIVROS: Livro[] = [
+export const BOOKS: Livro[] = [
   // --- Ficção ---
   { id: 1, titulo: '1984', autor: 'George Orwell', genero: 'Ficção', paginas: 328, status: 'lido', nota: 5, dataLeitura: '2026-08-30', novidade: true, favorito: true },
   { id: 2, titulo: 'A Revolução dos Bichos', autor: 'George Orwell', genero: 'Ficção', paginas: 152, status: 'lido', nota: 4, dataLeitura: '2026-06-21' },
@@ -77,93 +51,3 @@ export const LIVROS: Livro[] = [
   { id: 33, titulo: 'Essencialismo', autor: 'Greg McKeown', genero: 'Desenvolvimento pessoal', paginas: 272, novidade: true },
   { id: 34, titulo: 'Comece pelo Porquê', autor: 'Simon Sinek', genero: 'Desenvolvimento pessoal', paginas: 256 },
 ];
-
-// ---------- Tela inicial ----------
-
-/** Livros da seção "Novidades". */
-export function listarNovidades(): Livro[] {
-  return LIVROS.filter((l) => l.novidade);
-}
-
-/** Livros da seção "Originais". */
-export function listarOriginais(): Livro[] {
-  return LIVROS.filter((l) => l.original);
-}
-
-/** Livros de um gênero (uma fileira da tela inicial). */
-export function listarPorGenero(genero: string): Livro[] {
-  return LIVROS.filter((l) => l.genero === genero);
-}
-
-// ---------- Livros lendo / lidos ----------
-
-/** Livros que estão sendo lidos agora. */
-export function listarLivrosLendo(): Livro[] {
-  return LIVROS.filter((l) => l.status === 'lendo');
-}
-
-/** Todos os livros lidos, do mais recente para o mais antigo. */
-export function listarLivrosLidos(): Livro[] {
-  return LIVROS.filter((l) => l.status === 'lido').sort((a, b) =>
-    (b.dataLeitura ?? '').localeCompare(a.dataLeitura ?? ''),
-  );
-}
-
-// ---------- Tela de consultas ----------
-
-/** Filtra os livros lidos por título ou autor (ignora maiúsculas e acentos). */
-export function buscarLivros(texto: string): Livro[] {
-  const normalizar = (s: string) =>
-    s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  const termo = normalizar(texto.trim());
-  const todos = listarLivrosLidos();
-  if (!termo) return todos;
-  return todos.filter(
-    (l) => normalizar(l.titulo).includes(termo) || normalizar(l.autor).includes(termo),
-  );
-}
-
-/** Números de resumo da leitura. */
-export function resumoLeitura() {
-  const lidos = listarLivrosLidos();
-  const total = lidos.length;
-  const paginas = lidos.reduce((soma, l) => soma + l.paginas, 0);
-  const notaMedia = total ? lidos.reduce((soma, l) => soma + (l.nota ?? 0), 0) / total : 0;
-  return { total, paginas, notaMedia, lendo: listarLivrosLendo().length };
-}
-
-/** '2026-10-28' -> '28/10/2026' */
-export function formatarData(iso?: string): string {
-  if (!iso) return '';
-  const [ano, mes, dia] = iso.split('-');
-  return `${dia}/${mes}/${ano}`;
-}
-
-// ---------- Tela Estante (filtros) ----------
-
-/** Opções de filtro da Estante. 'todos' = botão "Marcar tudo". */
-export type FiltroEstante = 'todos' | 'lendo' | 'favoritos' | 'nao-lido';
-
-/**
- * Livros da Estante: filtro (chips) + busca por título/autor (ignora maiúsculas e acentos).
- * Ordem: lendo, lidos (mais recente primeiro) e não lidos (por título).
- */
-export function listarEstante(filtro: FiltroEstante, texto = ''): Livro[] {
-  const normalizar = (s: string) =>
-    s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  const termo = normalizar(texto.trim());
-  const ordem = (l: Livro) => (l.status === 'lendo' ? 0 : l.status === 'lido' ? 1 : 2);
-
-  return LIVROS.filter((l) => {
-    if (filtro === 'lendo' && l.status !== 'lendo') return false;
-    if (filtro === 'favoritos' && !l.favorito) return false;
-    if (filtro === 'nao-lido' && l.status) return false;
-    return !termo || normalizar(l.titulo).includes(termo) || normalizar(l.autor).includes(termo);
-  }).sort(
-    (a, b) =>
-      ordem(a) - ordem(b) ||
-      (ordem(a) === 1
-        ? (b.dataLeitura ?? '').localeCompare(a.dataLeitura ?? '')
-        : a.titulo.localeCompare(b.titulo)),
-  );
-}

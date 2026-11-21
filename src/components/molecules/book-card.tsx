@@ -4,16 +4,17 @@ import { BookCover } from '@/components/atoms/book-cover';
 import { ThemedText } from '@/components/atoms/themed-text';
 import { ThemedView } from '@/components/atoms/themed-view';
 import { Spacing } from '@/constants/theme';
-import { capaDoLivro } from '@/data/capas';
-import { formatarData, type Livro } from '@/data/livros';
+import { getCover } from '@/features/books/repository';
+import type { Livro } from '@/types/book';
+import { formatDate } from '@/utils/format-date';
 
-const CAPA_LARGURA = 96;
-const CAPA_ALTURA = 128;
+const COVER_WIDTH = 96;
+const COVER_HEIGHT = 128;
 
 // Última linha do card, conforme o status do livro.
-function textoDeStatus(livro: Livro): string {
+function getStatusText(livro: Livro): string {
   if (livro.status === 'lido') {
-    return `${'★'.repeat(livro.nota ?? 0)}${'☆'.repeat(5 - (livro.nota ?? 0))} · ${livro.paginas} páginas · lido em ${formatarData(livro.dataLeitura)}`;
+    return `${'★'.repeat(livro.nota ?? 0)}${'☆'.repeat(5 - (livro.nota ?? 0))} · ${livro.paginas} páginas · lido em ${formatDate(livro.dataLeitura)}`;
   }
   if (livro.status === 'lendo') {
     return `Lendo · página ${livro.paginaAtual ?? 0} de ${livro.paginas}`;
@@ -22,22 +23,22 @@ function textoDeStatus(livro: Livro): string {
 }
 
 // Card da Estante: título, capa logo abaixo do título e depois os detalhes.
-export function LivroCard({ livro }: { livro: Livro }) {
+export function BookCard({ livro }: { livro: Livro }) {
   return (
     <ThemedView type="backgroundElement" style={styles.card}>
       <ThemedText type="smallBold">{livro.titulo}</ThemedText>
       <BookCover
         titulo={livro.titulo}
         corIndice={livro.id}
-        source={capaDoLivro(livro)}
-        width={CAPA_LARGURA}
-        height={CAPA_ALTURA}
+        source={getCover(livro)}
+        width={COVER_WIDTH}
+        height={COVER_HEIGHT}
       />
       <ThemedText type="small" themeColor="textSecondary">
         {livro.autor} · {livro.genero}
       </ThemedText>
       <ThemedText type="small" themeColor="textSecondary">
-        {textoDeStatus(livro)}
+        {getStatusText(livro)}
       </ThemedText>
     </ThemedView>
   );

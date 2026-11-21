@@ -8,6 +8,8 @@ import { useTheme } from '@/hooks/use-theme';
 const SIMBOLOS = {
   configuracoes: { ios: 'gearshape', android: 'settings', web: 'settings' },
   notificacoes: { ios: 'bell', android: 'notifications', web: 'notifications' },
+  inicio: { ios: 'house', android: 'home', web: 'home' },
+  estante: { ios: 'books.vertical', android: 'library_books', web: 'library_books' },
 } as const;
 
 export type IconName = keyof typeof SIMBOLOS;

@@ -3,12 +3,12 @@ import { Pressable, StyleSheet } from 'react-native';
 import { BookCover } from '@/components/atoms/book-cover';
 import { ThemedText } from '@/components/atoms/themed-text';
 import { Spacing } from '@/constants/theme';
-import { capaDoLivro } from '@/data/capas';
-import type { Livro } from '@/data/livros';
+import { getCover } from '@/features/books/repository';
+import type { Livro } from '@/types/book';
 
 // Tamanho de cada "quadrado" de livro. Mude aqui para deixar maior ou menor.
-export const CAPA_LARGURA = 120;
-export const CAPA_ALTURA = 150;
+export const COVER_WIDTH = 120;
+export const COVER_HEIGHT = 150;
 
 type Props = {
   livro: Livro;
@@ -16,7 +16,7 @@ type Props = {
 };
 
 // Item da fileira da tela inicial: imagem da capa + autor embaixo.
-export function LivroCapa({ livro, onPress }: Props) {
+export function BookCoverItem({ livro, onPress }: Props) {
   return (
     <Pressable
       onPress={onPress}
@@ -24,9 +24,9 @@ export function LivroCapa({ livro, onPress }: Props) {
       <BookCover
         titulo={livro.titulo}
         corIndice={livro.id}
-        source={capaDoLivro(livro)}
-        width={CAPA_LARGURA}
-        height={CAPA_ALTURA}
+        source={getCover(livro)}
+        width={COVER_WIDTH}
+        height={COVER_HEIGHT}
       />
       <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
         {livro.autor}
@@ -37,7 +37,7 @@ export function LivroCapa({ livro, onPress }: Props) {
 
 const styles = StyleSheet.create({
   item: {
-    width: CAPA_LARGURA,
+    width: COVER_WIDTH,
     gap: Spacing.one,
   },
   pressed: {
