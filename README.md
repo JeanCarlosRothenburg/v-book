@@ -54,3 +54,44 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Regras de negócio — Tela inicial e Tela Estante
+
+> Por enquanto o front usa dados de teste (`src/features/books/repository/local/books-data.ts`). Abaixo está o que o back/banco precisa fornecer.
+
+### Livro
+Cada livro tem: `id`, `titulo`, `autor`, `genero` e `paginas`. Campos opcionais:
+
+| Campo | Para que serve |
+|---|---|
+| `status` | `lendo`, `lido` ou vazio (ainda não leu) |
+| `paginaAtual` | só quando `lendo` (0 até `paginas`) |
+| `nota` (1 a 5) e `dataLeitura` (AAAA-MM-DD) | só quando `lido` |
+| `novidade` | `true` = aparece na seção "Novidades" |
+| `original` | `true` = aparece na seção "Originais" |
+| `favorito` | `true` = aparece no filtro "Favoritos" da Estante |
+| `capa` | imagem da capa (URL). Se vier vazia, o front usa a capa provisória de `src/features/books/repository/local/covers.ts` |
+
+Um livro só pode ter um status por vez. Ao terminar de ler, passa de `lendo` para `lido` e ganha nota e data de leitura.
+
+### Tela inicial
+- Mostra seções em sequência, cada uma com um título e uma fileira de livros (capas) que rola para o lado: **Novidades**, **Originais** e uma seção por gênero (Ficção, História, Fantasia, Romance, Tecnologia, Desenvolvimento pessoal).
+- Novidades = livros com `novidade = true`. Originais = livros com `original = true`. Cada seção de gênero mostra os livros com aquele `genero`.
+- Seções sem livros não aparecem.
+- Cada livro aparece como a imagem da capa, e o autor embaixo.
+- No topo ficam o título "Início" e os ícones de engrenagem (configurações) e sino (notificações); as telas dessas ações ainda não existem (handlers em `src/app/(tabs)/index.tsx`).
+
+### Tela Estante (antiga "Consultas")
+- Lista os livros da estante, com título, **capa logo abaixo do título**, autor, gênero e a situação de leitura (lido: nota, páginas e data; lendo: página atual; não lido).
+- Busca por título ou autor (ignora maiúsculas e acentos), logo abaixo do título da tela.
+- Filtros logo abaixo da busca (um por vez): **Marcar tudo** (todos os livros), **Lendo** (`status = lendo`), **Favoritos** (`favorito = true`) e **Não lido** (sem `status`).
+- Ordem: lendo, depois lidos (mais recente primeiro) e por fim não lidos (por título).
+- Mostra a quantidade de livros encontrados e a mensagem "Nenhum livro encontrado" quando nada bate com a busca/filtro.
+
+### O que o back precisa oferecer
+- `GET /livros?novidade=true` — livros da seção Novidades.
+- `GET /livros?original=true` — livros da seção Originais.
+- `GET /livros?genero=Ficção` — livros de um gênero (uma chamada por seção).
+- `GET /livros?status=lido&busca=texto` — livros lidos, já ordenados por `dataLeitura` decrescente, com filtro opcional por título/autor.
+- `GET /livros?busca=texto&favorito=true` — livros da Estante; `status` (`lendo`/`lido`) e `favorito` são filtros opcionais, e "Não lido" = livros sem `status`.
+- `GET /livros?status=lendo` — livros em andamento.
