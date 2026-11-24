@@ -26,6 +26,20 @@ export const Colors = {
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
+// Capa de reserva (livro sem imagem): cor escolhida pelo id, com o título em cima.
+export const BookCoverColors = [
+  '#3B5BDB',
+  '#C2255C',
+  '#2B8A3E',
+  '#E8590C',
+  '#7048E8',
+  '#0C8599',
+  '#B08800',
+  '#862E9C',
+] as const;
+
+export const BookCoverTextColor = '#FFFFFF';
+
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */
@@ -61,5 +75,4 @@ export const Spacing = {
   six: 64,
 } as const;
 
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
